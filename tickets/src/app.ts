@@ -2,12 +2,8 @@ import express from 'express';
 import { json } from 'body-parser';
 import 'express-async-errors';
 import cookieSession from 'cookie-session';
-
-import { currentUserRouter } from './routes/current-user';
-import { signinRouter } from './routes/signin';
-import { signupRouter } from './routes/signup';
-import { signoutRouter } from './routes/signout';
-import { errorHandler, NotFoundError } from '@weitickets/common';
+import { errorHandler, NotFoundError, currentUser } from '@weitickets/common';
+import { createTicketRouter } from './routes/new';
 
 const app = express();
 app.set('trust proxy', true); // Express trust proxy
@@ -17,10 +13,9 @@ app.use(cookieSession({
   secure: process.env.NODE_ENV !== 'test', // Only set cookies over HTTPS，但是supertest不是！
 }))
 
-app.use(currentUserRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
-app.use(signupRouter);
+app.use(currentUser);
+app.use(createTicketRouter);
+
 
 app.get('*', async (req, res) => {
   throw new NotFoundError();
