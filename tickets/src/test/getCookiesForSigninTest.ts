@@ -1,11 +1,14 @@
-import request from "supertest";
-import jwt from "jsonwebtoken";
-import { app } from "../app";
+import request from 'supertest';
+import jwt from 'jsonwebtoken';
+import { app } from '../app';
+import mongoose from 'mongoose';
 
 export const getCookiesForSignedInTest = () => {
-
   // Build JWT payload {id, email}
-  const payload = { id: 'hefwohgog', email: 'test@example.com' };
+  const payload = {
+    id: new mongoose.Types.ObjectId().toHexString(),
+    email: 'test@example.com',
+  };
 
   // Create the JWT
   const token = jwt.sign(payload, process.env.JWT_KEY!);
@@ -21,4 +24,4 @@ export const getCookiesForSignedInTest = () => {
 
   // Return the cookie
   return [`session=${base64Session}`];
-}
+};

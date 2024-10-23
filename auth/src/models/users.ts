@@ -7,15 +7,15 @@ interface UserAttrs {
   password: string;
 }
 
-// 創建 User model 需要的屬性
-interface UserModel extends mongoose.Model<UserDoc> {
-  build(attrs: UserAttrs): UserDoc;
-}
-
-// 創建單一一個 User 需要的屬性
+// 去除掉_id 和 __v 用的 interface
 interface UserDoc extends mongoose.Document {
   email: string;
   password: string;
+}
+
+// extend UserDoc 來創建 User model 需要的屬性
+interface UserModel extends mongoose.Model<UserDoc> {
+  build(attrs: UserAttrs): UserDoc;
 }
 
 const userSchema = new mongoose.Schema(
