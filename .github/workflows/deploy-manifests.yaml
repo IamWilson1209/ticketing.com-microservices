@@ -1,3 +1,5 @@
+# This is a dummy change to trigger the deploy workflow
+
 name: deploy-manifests
 
 on:
@@ -9,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # a
     steps:
       - uses: actions/checkout@v3
       - uses: digitalocean/action-doctl@v2
