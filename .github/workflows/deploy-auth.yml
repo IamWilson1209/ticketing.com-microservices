@@ -18,8 +18,8 @@ jobs:
           DOCKER_USERNAME: ${{ secret.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secret.DOCKER_PASSWORD }}
       - run: docker push weishiuan/auth
-      # - uses: digitalocean/action-doctl@v2
-      #   with:
-      #     token: $ {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      # - run: doctl kubernetes cluster kubeconfig save [我的部屬名稱]
-      # - run: kubectl rollout restart deployment auth-depl
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: $ {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ticketing
+      - run: kubectl rollout restart deployment auth-depl
