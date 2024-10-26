@@ -2,6 +2,7 @@ import request from 'supertest';
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
+import { natsWrapper } from '../../nats-wrapper';
 
 it('has route handler listening to /api/tickets for posts requests', async () => {
   const response = await request(app).post('/api/tickets').send({});
@@ -29,43 +30,72 @@ it('returns a status other than 401 if user is signed in', async () => {
 
 it('returns an eror if an invalid title is provided', async () => {
   const cookie = getCookiesForSignedInTest();
-  await request(app).post('/api/tickets').set('Cookie', cookie).send({
-    title: '',
-    price: 10,
-  }).expect(400);
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: '',
+      price: 10,
+    })
+    .expect(400);
 
-  await request(app).post('/api/tickets').set('Cookie', cookie).send({
-    price: 10,
-  }).expect(400);
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      price: 10,
+    })
+    .expect(400);
 });
 
 it('returns an error if an invalid price is provided', async () => {
   const cookie = getCookiesForSignedInTest();
-  await request(app).post('/api/tickets').set('Cookie', cookie).send({
-    title: 'ghwoghwo',
-    price: -10,
-  }).expect(400);
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'ghwoghwo',
+      price: -10,
+    })
+    .expect(400);
 
-  await request(app).post('/api/tickets').set('Cookie', cookie).send({
-    title: 'ghegihwi',
-  }).expect(400);
-
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'ghegihwi',
+    })
+    .expect(400);
 });
 
 it('creates a ticket when valid inputs is provided', async () => {
-
   let tickets = await Ticket.find({});
   expect(tickets.length).toBe(0);
 
   const cookie = getCookiesForSignedInTest();
-  await request(app).post('/api/tickets').set('Cookie', cookie).send({
-    title: 'grwhehe',
-    price: 20,
-  }).expect(201);
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'grwhehe',
+      price: 20,
+    })
+    .expect(201);
 
   tickets = await Ticket.find({});
   expect(tickets.length).toBe(1);
   expect(tickets[0].title).toEqual('grwhehe');
   expect(tickets[0].price).toEqual(20);
+});
 
+it('publishes an event', async () => {
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', getCookiesForSignedInTest())
+    .send({
+      title: 'grwhehe',
+      price: 20,
+    })
+    .expect(201);
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

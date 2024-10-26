@@ -2,6 +2,8 @@ import request from 'supertest';
 import { app } from '../../app';
 import mongoose from 'mongoose';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
+import { natsWrapper } from '../../nats-wrapper';
+import { Ticket } from '../../models/ticket';
 
 it('returns a 404 if provided id not exist', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
@@ -13,7 +15,7 @@ it('returns a 404 if provided id not exist', async () => {
       price: 20,
     })
     .expect(404);
-})
+});
 
 it('returns a 401 if user not authenticated', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
@@ -24,7 +26,7 @@ it('returns a 401 if user not authenticated', async () => {
       price: 20,
     })
     .expect(401);
-})
+});
 
 it('returns a 401 if user not own ticket', async () => {
   const response = await request(app)
@@ -33,7 +35,7 @@ it('returns a 401 if user not own ticket', async () => {
     .send({
       title: 'Test Ticket',
       price: 20,
-    })
+    });
 
   await request(app)
     .put(`/api/tickets/${response.body.id}`)
@@ -43,7 +45,7 @@ it('returns a 401 if user not own ticket', async () => {
       price: 3000,
     })
     .expect(401);
-})
+});
 
 it('returns a 400 if user provided invalid title or price', async () => {
   const cookie = getCookiesForSignedInTest();
@@ -53,7 +55,7 @@ it('returns a 400 if user provided invalid title or price', async () => {
     .send({
       title: 'Test Ticket',
       price: 20,
-    })
+    });
 
   await request(app)
     .put(`/api/tickets/${response.body.id}`)
@@ -61,7 +63,7 @@ it('returns a 400 if user provided invalid title or price', async () => {
     .send({
       title: '',
       price: 20,
-    })
+    });
   expect(400);
 
   await request(app)
@@ -70,9 +72,9 @@ it('returns a 400 if user provided invalid title or price', async () => {
     .send({
       title: 'xxxxxxx',
       price: -9999,
-    })
+    });
   expect(400);
-})
+});
 
 it('update tickets with valid input, returns a 200 on successful GET request', async () => {
   const cookie = getCookiesForSignedInTest();
@@ -82,7 +84,7 @@ it('update tickets with valid input, returns a 200 on successful GET request', a
     .send({
       title: 'Test Ticket',
       price: 20,
-    })
+    });
   expect(201);
 
   const ticketResponse = await request(app)
@@ -91,9 +93,58 @@ it('update tickets with valid input, returns a 200 on successful GET request', a
     .send({
       title: 'Updated Test Ticket',
       price: 30,
-    })
+    });
   expect(200);
 
   expect(ticketResponse.body.title).toEqual('Updated Test Ticket');
   expect(ticketResponse.body.price).toEqual(30);
+});
+
+it('publishes an event', async () => {
+  const cookie = getCookiesForSignedInTest();
+  const response = await request(app)
+    .post(`/api/tickets/`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'Test Ticket',
+      price: 20,
+    });
+  expect(201);
+
+  const ticketResponse = await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'Updated Test Ticket',
+      price: 30,
+    });
+  expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+it('reject updates if the ticket is reserved', async () => {
+  const cookie = getCookiesForSignedInTest();
+
+  const response = await request(app)
+    .post(`/api/tickets/`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'Test Ticket',
+      price: 20,
+    });
+
+  const ticket = await Ticket.findById(response.body.id);
+  ticket!.set({ orderId: new mongoose.Types.ObjectId().toHexString() });
+  await ticket!.save();
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'Updated Test Ticket',
+      price: 30,
+    });
+  expect(400);
+
 });

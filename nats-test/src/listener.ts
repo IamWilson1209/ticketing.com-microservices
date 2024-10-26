@@ -18,6 +18,10 @@ stan.on('connect', () => {
 
   new TicketCreatedListener(stan).listen();
 
+
+  process.on('SIGINT', () => stan.close()); // 出現Interrupted signal (CTRL+C)時，結束NATS連線
+  process.on('SIGTERM', () => stan.close()); // 出現 Terminated signal (kill)時，結束NATS連線
+
   // // setManualAckMode to true to receive messages manually
   // // 人工決定要把event傳給誰，否則出意外可能會失去event
   // // 過了一陣子如果沒有人工確認，NAts會在傳給別的listener
@@ -44,7 +48,3 @@ stan.on('connect', () => {
 
   // });
 });
-
-
-process.on('SIGINT', () => stan.close()); // 出現Interrupted signal (CTRL+C)時，結束NATS連線
-process.on('SIGTERM', () => stan.close()); // 出現 Terminated signal (kill)時，結束NATS連線
