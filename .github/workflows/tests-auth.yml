@@ -1,6 +1,9 @@
 name: tests-auth
-on: 
-  pull_request
+
+on:
+  pull_request:
+    path:
+      - 'auth/**'
 
 jobs:
   build:
@@ -8,4 +11,3 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cd auth && npm install && npm run test:ci
-    
