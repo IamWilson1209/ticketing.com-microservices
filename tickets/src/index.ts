@@ -7,6 +7,7 @@ import { OrderCancelledListener } from './events/listener/order-cancelled-listen
 const start = async () => {
   console.log('Tickets service is starting......');
   // Check if JWT_KEY is defined in environment variables
+  console.log('hi from dev')
   if (!process.env.JWT_KEY) {
     throw new Error('JWT_KEY must be defined');
   }
