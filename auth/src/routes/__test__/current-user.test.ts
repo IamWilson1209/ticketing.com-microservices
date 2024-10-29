@@ -8,6 +8,7 @@ it('response with detail of current user', async () => {
   if (!cookie) {
     throw new Error('Cookie not set after signup');
   }
+
   const response = await request(app)
     .get('/api/users/currentuser')
     .set('Cookie', cookie)

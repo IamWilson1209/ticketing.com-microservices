@@ -20,6 +20,8 @@ it('fetches the order', async () => {
     .set('Cookie', user)
     .send({ ticketId: ticket.id })
     .expect(201);
+  console.log('show test order: ', order)
+  console.log('show test orderId: ', order.id)
 
   // make request to fetch the order
   const { body: fetchedOrder } = await request(app)
@@ -27,6 +29,9 @@ it('fetches the order', async () => {
     .set('Cookie', user)
     .send()
     .expect(200);
+
+  console.log('show test fetchedOrder: ', fetchedOrder)
+
 
   expect(fetchedOrder.id).toEqual(order.id);
 });

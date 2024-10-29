@@ -3,6 +3,7 @@ import {
   requireAuth,
   NotFoundError,
   NotAuthorizeError,
+  OrderStatus,
 } from '@weitickets/common';
 import { Order } from '../models/order';
 import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
@@ -14,7 +15,10 @@ router.get(
   '/api/orders/:orderId',
   requireAuth,
   async (req: Request, res: Response) => {
-    const order = await Order.findById(req.params.orderId).populate('ticket');
+
+    const { orderId } = req.params;
+
+    const order = await Order.findById(orderId).populate('ticket');
 
     if (!order) {
       throw new NotFoundError();
@@ -22,6 +26,9 @@ router.get(
     if (order.userId !== req.currentUser!.id) {
       throw new NotAuthorizeError();
     }
+
+    order.status = OrderStatus.Cancelled;
+    await order.save();
 
     new OrderCancelledPublisher(natsWrapper.client).publish({
       id: order.id,
@@ -31,7 +38,7 @@ router.get(
       },
     })
 
-    res.send(order);
+    res.status(204).send(order);
   }
 );
 

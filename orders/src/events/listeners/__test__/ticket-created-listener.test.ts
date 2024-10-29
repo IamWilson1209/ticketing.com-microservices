@@ -30,23 +30,23 @@ const setup = async () => {
 }
 
 
-// it('create and saves a ticket', async () => {
-//   const { listener, data, msg } = await setup();
+it('create and saves a ticket', async () => {
+  const { listener, data, msg } = await setup();
 
-//   await listener.onMessage(data, msg);
+  await listener.onMessage(data, msg);
 
-//   // write assertions to verify the ticket was saved correctly
-//   const ticket = await Ticket.findById(data.id);
-//   expect(ticket).toBeDefined();
-//   expect(ticket!.title).toEqual(data.title);
-//   expect(ticket!.price).toEqual(data.price);
-// })
+  // write assertions to verify the ticket was saved correctly
+  const ticket = await Ticket.findById(data.id);
+  expect(ticket).toBeDefined();
+  expect(ticket!.title).toEqual(data.title);
+  expect(ticket!.price).toEqual(data.price);
+})
 
-// it('acks a message', async () => {
-//   const { listener, data, msg } = await setup();
-//   // call the onMessage method with the fake data and message
-//   await listener.onMessage(data, msg);
+it('acks a message', async () => {
+  const { listener, data, msg } = await setup();
+  // call the onMessage method with the fake data and message
+  await listener.onMessage(data, msg);
 
-//   expect(msg.ack).not.toHaveBeenCalled();
-//   // write assertions to verify the ticket was saved correctly
-// })
+  expect(msg.ack).toHaveBeenCalled();
+  // write assertions to verify the ticket was saved correctly
+})
