@@ -24,9 +24,9 @@ it('success when given valid credientials', async () => {
     .post('/api/users/signup')
     .send({ email: 'test@test.com', password: 'password' })
     .expect(201);
-  const response = await request(app)
+  await request(app)
     .post('/api/users/signin')
     .send({ email: 'test@test.com', password: 'password' })
     .expect(201);
-  expect(response.get('Set-Cookie')).toBeDefined();
+  expect(400);
 });

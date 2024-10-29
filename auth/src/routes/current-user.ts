@@ -4,7 +4,7 @@ import { currentUser } from '@weitickets/common';
 
 const router = express.Router();
 
-router.get('/api/users/currentuser', currentUser, (req, res): void => {
+router.get('/api/users/currentuser', currentUser, (req, res) => {
 
   res.send({ currentUser: req.currentUser || null });
 

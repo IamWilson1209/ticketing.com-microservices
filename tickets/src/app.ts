@@ -23,7 +23,7 @@ app.use(indexTicketRouter);
 app.use(updateTicketRouter)
 
 
-app.get('*', async (req, res) => {
+app.all('*', async (req, res) => {
   throw new NotFoundError();
 });
 
