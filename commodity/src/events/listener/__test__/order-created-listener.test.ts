@@ -1,6 +1,6 @@
 import { OrderCreatedListener } from '../order-created-listener';
 import { natsWrapper } from '../../../nats-wrapper';
-import { Commodity } from '../../../models/commodity';
+import { Category, Commodity } from '../../../models/commodity';
 import mongoose from 'mongoose';
 import { OrderCreatedEvent } from '@weitickets/common';
 import { OrderStatus } from '@weitickets/common';
@@ -12,6 +12,7 @@ const setup = async () => {
     title: 'concert ticket',
     price: 20,
     userId: 'gjiogo',
+    category: Category.Books,
   });
   await commodity.save();
 

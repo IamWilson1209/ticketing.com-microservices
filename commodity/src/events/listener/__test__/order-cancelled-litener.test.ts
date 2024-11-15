@@ -1,6 +1,6 @@
 import { natsWrapper } from '../../../nats-wrapper';
 import { OrderCancelledListener } from '../order-cancelled-listener';
-import { Commodity } from '../../../models/commodity';
+import { Category, Commodity } from '../../../models/commodity';
 import mongoose from 'mongoose';
 import { OrderCancelledEvent, OrderStatus } from '@weitickets/common';
 import { Message } from 'node-nats-streaming';
@@ -13,6 +13,7 @@ const setup = async () => {
     title: 'concert ticket',
     price: 20,
     userId: 'gjiogo',
+    category: Category.Books,
   })
   commodity.set({ orderId });
   await commodity.save();

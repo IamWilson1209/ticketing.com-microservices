@@ -2,8 +2,9 @@ import request from 'supertest';
 import { app } from '../../app';
 import mongoose from 'mongoose';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
+import { Category } from '../../models/commodity';
 
-it('return a 404 status if ticket is not found', async () => {
+it('return a 404 status if commodity is not found', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
   await request(app)
     .get(`/api/tickets/${id}`)
@@ -11,15 +12,16 @@ it('return a 404 status if ticket is not found', async () => {
     .expect(404);
 });
 
-it('return the ticket if ticket is found', async () => {
+it('return the commodity if commodity is found', async () => {
   const cookie = getCookiesForSignedInTest();
 
   const response = await request(app)
     .post('/api/tickets')
     .set('Cookie', cookie)
     .send({
-      title: 'Test Ticket',
+      title: 'Test commodity',
       price: 10,
+      category: Category.Books,
     })
     .expect(201);
 
@@ -28,6 +30,6 @@ it('return the ticket if ticket is found', async () => {
     .send({})
     .expect(200);
 
-  expect(ticketResponse.body.title).toEqual('Test Ticket');
+  expect(ticketResponse.body.title).toEqual('Test commodity');
   expect(ticketResponse.body.price).toEqual(10);
 });

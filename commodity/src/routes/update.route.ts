@@ -46,4 +46,4 @@ router.put(
   }
 );
 
-export { router as updateTicketRouter };
+export { router as updateCommodityRouter };

@@ -3,7 +3,7 @@ import { app } from '../../app';
 import mongoose from 'mongoose';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import { natsWrapper } from '../../nats-wrapper';
-import { Commodity } from '../../models/commodity';
+import { Category, Commodity } from '../../models/commodity';
 
 it('returns a 404 if provided id not exist', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
@@ -13,6 +13,7 @@ it('returns a 404 if provided id not exist', async () => {
     .send({
       title: 'Updated Test Commodity',
       price: 20,
+      category: Category.Books,
     })
     .expect(404);
 });
@@ -24,6 +25,7 @@ it('returns a 401 if user not authenticated', async () => {
     .send({
       title: 'Updated Test Commodity',
       price: 20,
+      category: Category.Books,
     })
     .expect(401);
 });
@@ -35,6 +37,7 @@ it('returns a 401 if user not own commodity', async () => {
     .send({
       title: 'Test Commodity',
       price: 20,
+      category: Category.Books,
     });
 
   await request(app)
@@ -43,6 +46,7 @@ it('returns a 401 if user not own commodity', async () => {
     .send({
       title: 'Updated Test Commodity',
       price: 3000,
+      category: Category.Books,
     })
     .expect(401);
 });
@@ -55,6 +59,7 @@ it('returns a 400 if user provided invalid title or price', async () => {
     .send({
       title: 'Test Commodity',
       price: 20,
+      category: Category.Books,
     });
 
   await request(app)
@@ -63,6 +68,7 @@ it('returns a 400 if user provided invalid title or price', async () => {
     .send({
       title: '',
       price: 20,
+      category: Category.Books,
     });
   expect(400);
 
@@ -72,6 +78,7 @@ it('returns a 400 if user provided invalid title or price', async () => {
     .send({
       title: 'xxxxxxx',
       price: -9999,
+      category: Category.Books,
     });
   expect(400);
 });
@@ -84,6 +91,7 @@ it('update Commoditise with valid input, returns a 200 on successful GET request
     .send({
       title: 'Test Commodity',
       price: 20,
+      category: Category.Books,
     });
   expect(201);
 
@@ -93,6 +101,7 @@ it('update Commoditise with valid input, returns a 200 on successful GET request
     .send({
       title: 'Updated Test Commodity',
       price: 30,
+      category: Category.Books,
     });
   expect(200);
 
@@ -108,6 +117,7 @@ it('publishes an event', async () => {
     .send({
       title: 'Test Commodity',
       price: 20,
+      category: Category.Books,
     });
   expect(201);
 
@@ -117,6 +127,7 @@ it('publishes an event', async () => {
     .send({
       title: 'Updated Test Commodity',
       price: 30,
+      category: Category.Books,
     });
   expect(200);
 
@@ -132,6 +143,7 @@ it('reject updates if the commodity is reserved', async () => {
     .send({
       title: 'Test Commodity',
       price: 20,
+      category: Category.Books,
     });
 
   const commodity = await Commodity.findById(response.body.id);
@@ -144,6 +156,7 @@ it('reject updates if the commodity is reserved', async () => {
     .send({
       title: 'Updated Test Commodity',
       price: 30,
+      category: Category.Books,
     });
   expect(400);
 
