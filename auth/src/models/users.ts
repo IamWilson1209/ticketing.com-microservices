@@ -5,12 +5,19 @@ import { Password } from '../services/password';
 interface UserAttrs {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
 }
 
-// 去除掉_id 和 __v 用的 interface
+// 去除掉 _id 和 __v 用的 interface
 interface UserDoc extends mongoose.Document {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  createAt: Date;
 }
 
 // extend UserDoc 來創建 User model 需要的屬性
@@ -22,6 +29,10 @@ const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
+    createAt: { type: Date, default: Date.now() },
   },
   {
     toJSON: {
@@ -30,6 +41,7 @@ const userSchema = new mongoose.Schema(
         ret.id = ret._id; // 重新mapping防止跟其他資料庫衝突
         delete ret._id;
         delete ret.password;
+        delete ret.phoneNumber;
         delete ret.__v;
       },
     },

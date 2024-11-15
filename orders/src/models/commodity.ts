@@ -41,14 +41,6 @@ const commoditySchema = new mongoose.Schema(
 commoditySchema.set('versionKey', 'version');
 commoditySchema.plugin(updateIfCurrentPlugin);
 
-// ticketSchema.pre('save', async function (done) {
-//   // @ts-ignore
-//   this.$where = {
-//     version: this.get('version') - 1,
-//   }
-//   done();
-// })
-
 commoditySchema.statics.findByEvent = async (event: {
   id: string;
   version: number;

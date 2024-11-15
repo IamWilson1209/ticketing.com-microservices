@@ -20,8 +20,6 @@ it('fetches the order', async () => {
     .set('Cookie', user)
     .send({ ticketId: commodity.id })
     .expect(201);
-  console.log('show test order: ', order)
-  console.log('show test orderId: ', order.id)
 
   // make request to fetch the order
   const { body: fetchedOrder } = await request(app)
@@ -43,7 +41,6 @@ it('returns an error if one user tries to fetch another users order', async () =
   await commodity.save();
 
   const user = getCookiesForSignedInTest();
-  console.log('user: ', user)
   // make a request to build an order with this commodity
   const { body: order } = await request(app)
     .post('/api/orders')

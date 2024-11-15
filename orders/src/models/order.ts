@@ -1,21 +1,21 @@
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { OrderStatus } from '@weitickets/common';
-import { TicketDoc } from './commodity';
+import { CommodityDoc } from './commodity';
 export { OrderStatus }
 
 interface OrderAttrs {
   userId: string;
   status: OrderStatus;
   expiresAt: Date;
-  ticket: TicketDoc;
+  ticket: CommodityDoc;
 }
 
 interface OrderDoc extends mongoose.Document {
   userId: string;
   status: OrderStatus;
   expiresAt: Date;
-  ticket: TicketDoc;
+  ticket: CommodityDoc;
   version: number;
 }
 

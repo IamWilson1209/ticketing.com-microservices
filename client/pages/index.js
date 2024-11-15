@@ -33,7 +33,6 @@ const LandingPage = ({ currentUser, tickets }) => {
 };
 
 LandingPage.getInitialProps = async (context, client, currentUser) => {
-  console.log('STRIPE_PUBLIC_KEY:', process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
   const { data } = await client.get('/api/tickets');
   return { tickets: data };
 };
