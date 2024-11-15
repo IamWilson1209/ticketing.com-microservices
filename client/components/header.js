@@ -7,25 +7,25 @@ export default ({ currentUser }) => {
     currentUser && { label: 'Sell Tockets', href: '/tickets/new' },
     currentUser && { label: 'My Orders', href: '/orders' },
     currentUser && { label: 'Sign Out', href: '/auth/signout' },
+    // currentUser && { label: 'Subscription', href: '/subscribe' },
   ]
     .filter((linkConfig) => linkConfig) // filter out null or undefined values
     .map(({ label, href }) => {
       return (
-        <li key={href} className="nav-item">
-          <Link className="nav-link" href={href}>
+        <li key={href} className="">
+          <Link className="btn btn-ghost text-xl" href={href}>
             {label}
           </Link>
         </li>
       );
     });
   return (
-    <nav className="navbar navbar-light bg-light">
-      <Link className="navbar-brand" href="/">
-        GitTix
+    <nav className="navbar bg-base-100">
+      <Link className="btn glass" href="/">
+        E-Commerce
       </Link>
-
-      <div className="d-flex justify-content-end">
-        <ul className="nav d-flex align-items-center">{links}</ul>
+      <div className="flex-none">
+        <ul className="menu menu-horizontal space-x-4">{links}</ul>
       </div>
     </nav>
   );

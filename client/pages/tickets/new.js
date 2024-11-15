@@ -28,27 +28,37 @@ const NewTicket = () => {
 
   return (
     <div>
-      <h1>Create a Ticket</h1>
-      <form onSubmit={onSubmit}>
+      <h1 className="text-3xl hero-content text-center font-bold">
+        Sell Anything
+      </h1>
+      <form onSubmit={onSubmit} className="space-y-4">
         <div className="form-group">
-          <label>Title</label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="form-control"
-          />
+          <label className="input input-bordered flex items-center gap-2 mb-2">
+            Title
+            <input
+              type="text"
+              placeholder="your tickets"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="grow"
+            />
+          </label>
         </div>
         <div className="form-group">
-          <label>Price</label>
-          <input
-            value={price}
-            onBlur={onBlur}
-            onChange={(e) => setPrice(e.target.value)}
-            className="form-control"
-          ></input>
+          <label className="input input-bordered flex items-center gap-2 mb-2">
+            Price
+            <input
+              type="text"
+              placeholder="set a price"
+              onBlur={onBlur}
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="grow"
+            />
+          </label>
         </div>
         {errors}
-        <button className="btn btn-primary">Submit</button>
+        <button className="btn btn-primary mt-4">Submit</button>
       </form>
     </div>
   );

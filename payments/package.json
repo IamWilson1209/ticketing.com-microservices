@@ -31,12 +31,14 @@
     "mongoose": "^8.7.2",
     "mongoose-update-if-current": "^1.4.0",
     "node-nats-streaming": "^0.3.2",
+    "nodemailer": "^6.9.16",
     "stripe": "^17.2.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
   },
   "devDependencies": {
     "@types/jest": "^29.5.13",
+    "@types/nodemailer": "^6.4.16",
     "@types/supertest": "^6.0.2",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.1.2",

@@ -3,15 +3,14 @@ import {
   requireAuth,
   NotFoundError,
   NotAuthorizeError,
-  OrderStatus,
 } from '@weitickets/common';
-import { Order } from '../models/order';
+import { Order, OrderStatus } from '../models/order';
 import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
-router.get(
+router.delete(
   '/api/orders/:orderId',
   requireAuth,
   async (req: Request, res: Response) => {

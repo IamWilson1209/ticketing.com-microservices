@@ -12,7 +12,6 @@ router.get(
   '/api/orders/:orderId',
   requireAuth,
   async (req: Request, res: Response) => {
-    console.log('---------------- show route: /api/orders/:orderId')
 
     const { orderId } = req.params;
     const order = await Order.findById(orderId).populate('ticket');

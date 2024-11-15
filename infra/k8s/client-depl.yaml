@@ -15,6 +15,11 @@ spec:
       containers:
         - name: client
           image: weishiuan/client
+          env:
+            - name: STRIPE_SECRET_KEY
+              value: 'sk_test_51QDmg000hRbHMI0GqQm12CEotOBxxHC9xQxr1GqnmPaRpw5ujom8rmKRy0u1EIDe3Tsdhc57edG5e0fjzbaqV2qu00rTIeRh8f'
+            - name: STRIPE_PUBLIC_KEY
+              value: 'pk_test_51QDmg000hRbHMI0G9BkUuSvbjxhhvlZZ3cfcSoRHt4kMrqS5dvdSY9VPeJpLOxomEFEg0BWFlci8XyEyrWWVSmg800E8u4vZrv'
 ---
 apiVersion: v1
 kind: Service
