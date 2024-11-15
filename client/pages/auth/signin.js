@@ -9,9 +9,6 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  console.log(process.env.GOOGLE_CLIENT_ID);
-  console.log(process.env.GOOGLE_CLIENT_SECRET);
-
   const { doRequest, errors } = useRequest({
     url: '/api/users/signin',
     method: 'post',
@@ -22,10 +19,6 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await doRequest();
-  };
-
-  const handleGoogleSignIn = () => {
-    signIn('google');
   };
 
   return (
@@ -77,16 +70,6 @@ const Signup = () => {
         {errors}
         <button type="submit" className="btn btn-primary">
           Sign in
-        </button>
-      </form>
-      <form onSubmit={handleSubmit}>
-        {/* 你的登入表單 */}
-        <button
-          type="button"
-          className="btn btn-google"
-          onClick={handleGoogleSignIn}
-        >
-          Sign in with Google
         </button>
       </form>
     </>
