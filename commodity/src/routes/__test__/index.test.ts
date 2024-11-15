@@ -1,7 +1,8 @@
 import request from 'supertest';
 import { app } from '../../app';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
-import { Category } from '../../models/commodity';
+import { Category } from '@weitickets/common';
+
 
 it('A user can fetch a list of commodity', async () => {
   await request(app)

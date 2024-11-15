@@ -1,5 +1,6 @@
 import { Commodity } from '../commodity';
-import { Category } from '../commodity';
+import { Category } from '@weitickets/common';
+
 
 it('implement optimistic concurrency for commodity model', async () => {
   const commodity = Commodity.build({

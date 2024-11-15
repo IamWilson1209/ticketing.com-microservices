@@ -1,14 +1,6 @@
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
-export enum Category {
-  Clothes = "Clothes",
-  Shoes = "Shoes",
-  Books = "Books",
-  Electronics = "Electronics",
-  Furniture = "Furniture",
-  Other = "Other",
-}
 
 interface CommodityAttrs {
   title: string;

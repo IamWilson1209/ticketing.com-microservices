@@ -1,9 +1,9 @@
 import request from 'supertest';
 import { app } from '../../app';
-import { Category, Commodity } from '../../models/commodity';
+import { Commodity } from '../../models/commodity';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import { natsWrapper } from '../../nats-wrapper';
-import { Tag, TagCategory } from '../../models/tags';
+import { Category, TagCategory } from '@weitickets/common';
 
 it('has route handler listening to /api/tickets for posts requests', async () => {
   const response = await request(app).post('/api/tickets').send({});
@@ -142,7 +142,6 @@ it('creates a commodity when valid inputs is provided', async () => {
   expect(commodities.length).toBe(1);
 
   const commodity = await Commodity.findById(commodities[0].id).populate('tags');
-  console.log("commodity: ", commodity)
   expect(commodity?.title).toEqual('grwhehe');
   expect(commodity?.price).toEqual(20);
   expect(commodity?.category).toEqual(Category.Electronics);

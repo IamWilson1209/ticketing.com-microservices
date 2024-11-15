@@ -3,7 +3,9 @@ import { app } from '../../app';
 import mongoose from 'mongoose';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import { natsWrapper } from '../../nats-wrapper';
-import { Category, Commodity } from '../../models/commodity';
+import { Commodity } from '../../models/commodity';
+import { Category } from '@weitickets/common';
+
 
 it('returns a 404 if provided id not exist', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();

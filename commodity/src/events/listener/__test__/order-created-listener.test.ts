@@ -1,10 +1,11 @@
 import { OrderCreatedListener } from '../order-created-listener';
 import { natsWrapper } from '../../../nats-wrapper';
-import { Category, Commodity } from '../../../models/commodity';
+import { Commodity } from '../../../models/commodity';
 import mongoose from 'mongoose';
 import { OrderCreatedEvent } from '@weitickets/common';
 import { OrderStatus } from '@weitickets/common';
 import { Message } from 'node-nats-streaming';
+import { Category } from '@weitickets/common';
 
 const setup = async () => {
   const listener = new OrderCreatedListener(natsWrapper.client);

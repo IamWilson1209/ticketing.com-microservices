@@ -1,22 +1,6 @@
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
-export enum TagCategory {
-  Man = "Man",
-  Woman = "Woman",
-  Child = "Child",
-  Home = "Home",
-  Business = "Business",
-  Leisure = "Leisure",
-  Fashion = "Fashion",
-  Summer = "Summer",
-  Sports = "Sports",
-  Outdoor = "Outdoor",
-  Garden = "Garden",
-  Health = "Health",
-  Travel = "Travel",
-}
-
 interface TagAttrs {
   name: string;
   commodityId: mongoose.Types.ObjectId;

@@ -2,7 +2,8 @@ import request from 'supertest';
 import { app } from '../../app';
 import mongoose from 'mongoose';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
-import { Category } from '../../models/commodity';
+import { Category } from '@weitickets/common';
+
 
 it('return a 404 status if commodity is not found', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
