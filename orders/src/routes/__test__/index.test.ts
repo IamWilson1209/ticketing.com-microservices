@@ -1,25 +1,24 @@
 import request from 'supertest';
 import { app } from '../../app';
-import { Order } from '../../models/order';
-import { Ticket } from '../../models/ticket';
+import { Commodity } from '../../models/commodity';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import mongoose from 'mongoose';
 
-const buildTickets = async () => {
-  const ticket = Ticket.build({
+const buildCommodities = async () => {
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
-    title: `Ticket`,
+    title: `Commodity`,
     price: 200,
   });
-  await ticket.save();
-  return ticket;
+  await commodity.save();
+  return commodity;
 }
 
 it('fetch orders for an particulate user', async () => {
   // Create tree tickets
-  const ticketOne = await buildTickets();
-  const ticketTwo = await buildTickets();
-  const ticketThree = await buildTickets();
+  const commodityOne = await buildCommodities();
+  const commodityTwo = await buildCommodities();
+  const commodityThree = await buildCommodities();
 
   // Create User1 & 2
   const userOne = getCookiesForSignedInTest();
@@ -28,18 +27,18 @@ it('fetch orders for an particulate user', async () => {
   await request(app)
     .post('/api/orders')
     .set('Cookie', userOne)
-    .send({ ticketId: ticketOne.id })
+    .send({ ticketId: commodityOne.id })
     .expect(201);
 
   const { body: orderOne } = await request(app)
     .post('/api/orders')
     .set('Cookie', userTwo)
-    .send({ ticketId: ticketTwo.id })
+    .send({ ticketId: commodityTwo.id })
     .expect(201);
   const { body: orderTwo } = await request(app)
     .post('/api/orders')
     .set('Cookie', userTwo)
-    .send({ ticketId: ticketThree.id })
+    .send({ ticketId: commodityThree.id })
     .expect(201);
 
   const response = await request(app)
@@ -50,6 +49,6 @@ it('fetch orders for an particulate user', async () => {
   expect(response.body.length).toEqual(2);
   expect(response.body[0].id).toEqual(orderOne.id)
   expect(response.body[1].id).toEqual(orderTwo.id)
-  expect(response.body[0].ticket.id).toEqual(ticketTwo.id)
-  expect(response.body[1].ticket.id).toEqual(ticketThree.id)
+  expect(response.body[0].ticket.id).toEqual(commodityTwo.id)
+  expect(response.body[1].ticket.id).toEqual(commodityThree.id)
 })

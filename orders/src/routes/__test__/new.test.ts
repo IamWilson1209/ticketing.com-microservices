@@ -3,65 +3,65 @@ import { app } from '../../app';
 import mongoose from 'mongoose';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import { Order, OrderStatus } from '../../models/order';
-import { Ticket } from '../../models/ticket';
+import { Commodity } from '../../models/commodity';
 import { natsWrapper } from '../../nats-wrapper';
 
-it('returns an error if tickets is not exist', async () => {
-  const ticketId = new mongoose.Types.ObjectId();
+it('returns an error if commodity is not exist', async () => {
+  const commodityId = new mongoose.Types.ObjectId();
   await request(app)
     .post('/api/orders')
     .set('Cookie', getCookiesForSignedInTest())
-    .send({ ticketId })
+    .send({ commodityId })
     .expect(404);
 });
 
-it('returns an error if tickets is already reserved', async () => {
-  const ticket = Ticket.build({
+it('returns an error if commodity is already reserved', async () => {
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
-    title: 'Test ticket',
+    title: 'Test commodity',
     price: 10,
   });
-  await ticket.save();
+  await commodity.save();
   const order = Order.build({
     userId: 'geiowghiohgeow',
     status: OrderStatus.Created,
     expiresAt: new Date(),
-    ticket,
+    ticket: commodity,
   });
   await order.save();
   await request(app)
     .post('/api/orders')
     .set('Cookie', getCookiesForSignedInTest())
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: commodity.id })
     .expect(400);
 });
 
-it('reserve a ticket', async () => {
-  const ticket = Ticket.build({
+it('reserve a commodity', async () => {
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'Test ticket',
     price: 10,
   });
-  await ticket.save();
+  await commodity.save();
   await request(app)
     .post('/api/orders')
     .set('Cookie', getCookiesForSignedInTest())
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: commodity.id })
     .expect(201);
 });
 
 it('emits an order created event', async () => {
-  const ticket = Ticket.build({
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
-    title: 'Test ticket',
+    title: 'Test commodity',
     price: 10,
   });
-  await ticket.save();
+  await commodity.save();
 
   await request(app)
     .post('/api/orders')
     .set('Cookie', getCookiesForSignedInTest())
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: commodity.id })
     .expect(201);
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();

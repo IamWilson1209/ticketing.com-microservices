@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-import { Ticket } from '../../models/ticket';
+import { Commodity } from '../../models/commodity';
 import { Order, OrderStatus } from '../../models/order';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import { natsWrapper } from '../../nats-wrapper';
@@ -12,19 +12,19 @@ import mongoose from 'mongoose';
 
 it('marks an order as cancelled', async () => {
   // create a ticket with Ticket Model
-  const ticket = Ticket.build({
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 20,
   });
-  await ticket.save();
+  await commodity.save();
 
   const user = getCookiesForSignedInTest();
   // make a request to create an order
   const { body: order } = await request(app)
     .post('/api/orders')
     .set('Cookie', user)
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: commodity.id })
     .expect(201);
 
   // make a request to cancel the order
@@ -41,19 +41,19 @@ it('marks an order as cancelled', async () => {
 
 it('emits a order cancelled event', async () => {
   // create a ticket with Ticket Model
-  const ticket = Ticket.build({
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 20,
   });
-  await ticket.save();
+  await commodity.save();
 
   const user = getCookiesForSignedInTest();
   // make a request to create an order
   const { body: order } = await request(app)
     .post('/api/orders')
     .set('Cookie', user)
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: commodity.id })
     .expect(201);
 
   // make a request to cancel the order

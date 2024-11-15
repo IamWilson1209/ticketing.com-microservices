@@ -3,7 +3,7 @@ import { natsWrapper } from "../../../nats-wrapper";
 import { TicketCreateEvent } from "@weitickets/common";
 import mongoose from "mongoose";
 import { Message } from "node-nats-streaming";
-import { Ticket } from "../../../models/ticket";
+import { Commodity } from "../../../models/commodity";
 
 it('returns an error if the ticket is not found', async () => {
 
@@ -16,7 +16,7 @@ const setup = async () => {
   const data: TicketCreateEvent['data'] = {
     id: new mongoose.Types.ObjectId().toHexString(),
     version: 0,
-    title: 'Test Ticket',
+    title: 'Test Commodity',
     price: 10,
     userId: new mongoose.Types.ObjectId().toHexString(),
   };
@@ -30,16 +30,16 @@ const setup = async () => {
 }
 
 
-it('create and saves a ticket', async () => {
+it('create and saves a commodity', async () => {
   const { listener, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
 
   // write assertions to verify the ticket was saved correctly
-  const ticket = await Ticket.findById(data.id);
-  expect(ticket).toBeDefined();
-  expect(ticket!.title).toEqual(data.title);
-  expect(ticket!.price).toEqual(data.price);
+  const commodity = await Commodity.findById(data.id);
+  expect(commodity).toBeDefined();
+  expect(commodity!.title).toEqual(data.title);
+  expect(commodity!.price).toEqual(data.price);
 })
 
 it('acks a message', async () => {

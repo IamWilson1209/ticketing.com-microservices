@@ -1,5 +1,4 @@
 import request from 'supertest';
-import { Ticket } from '../../models/ticket';
 import { app } from '../../app';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 

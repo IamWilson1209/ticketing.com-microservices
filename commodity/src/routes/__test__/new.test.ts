@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-import { Ticket } from '../../models/ticket';
+import { Commodity } from '../../models/commodity';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import { natsWrapper } from '../../nats-wrapper';
 
@@ -69,8 +69,8 @@ it('returns an error if an invalid price is provided', async () => {
 });
 
 it('creates a ticket when valid inputs is provided', async () => {
-  let tickets = await Ticket.find({});
-  expect(tickets.length).toBe(0);
+  let commodity = await Commodity.find({});
+  expect(commodity.length).toBe(0);
 
   const cookie = getCookiesForSignedInTest();
   await request(app)
@@ -82,10 +82,10 @@ it('creates a ticket when valid inputs is provided', async () => {
     })
     .expect(201);
 
-  tickets = await Ticket.find({});
-  expect(tickets.length).toBe(1);
-  expect(tickets[0].title).toEqual('grwhehe');
-  expect(tickets[0].price).toEqual(20);
+  commodity = await Commodity.find({});
+  expect(commodity.length).toBe(1);
+  expect(commodity[0].title).toEqual('grwhehe');
+  expect(commodity[0].price).toEqual(20);
 });
 
 it('publishes an event', async () => {

@@ -1,6 +1,6 @@
 import { Message } from 'node-nats-streaming';
 import { Subjects, Listener, TicketUpdatedEvent } from '@weitickets/common';
-import { Ticket } from '../../models/ticket';
+import { Commodity } from '../../models/commodity';
 import { queueGroupName } from './queue-group-name';
 
 export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
@@ -8,16 +8,16 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   queueGroupName = queueGroupName;
   async onMessage(data: TicketUpdatedEvent['data'], msg: Message) {
 
-    const ticket = await Ticket.findByEvent(data)
+    const commodity = await Commodity.findByEvent(data)
 
-    if (!ticket) {
+    if (!commodity) {
       //
-      throw new Error('Ticket not found');
+      throw new Error('Commodity not found');
     }
 
     const { title, price } = data;
-    ticket.set({ title, price });
-    await ticket.save();
+    commodity.set({ title, price });
+    await commodity.save();
 
     msg.ack();
   }

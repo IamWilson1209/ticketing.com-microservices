@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { requireAuth, validateRequest } from '@weitickets/common';
 import { body } from 'express-validator';
-import { Ticket } from '../models/ticket';
+import { Commodity } from '../models/commodity';
 import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
@@ -17,17 +17,17 @@ router.post(
   validateRequest,
   async (req: Request, res: Response) => {
     const { title, price } = req.body;
-    const ticket = Ticket.build({ title, price, userId: req.currentUser!.id });
+    const commodity = Commodity.build({ title, price, userId: req.currentUser!.id });
 
-    await ticket.save();
+    await commodity.save();
     new TicketCreatedPublisher(natsWrapper.client).publish({
-      id: ticket.id,
-      version: ticket.version,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId,
+      id: commodity.id,
+      version: commodity.version,
+      title: commodity.title,
+      price: commodity.price,
+      userId: commodity.userId,
     });
-    res.status(201).send(ticket);
+    res.status(201).send(commodity);
   }
 );
 

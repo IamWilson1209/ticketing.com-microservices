@@ -8,7 +8,7 @@ import {
 import { body } from 'express-validator';
 import mongoose from 'mongoose';
 import { Order } from '../models/order';
-import { Ticket } from '../models/ticket';
+import { Commodity } from '../models/commodity';
 import { NotFoundError } from '@weitickets/common';
 import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
 import { natsWrapper } from '../nats-wrapper';
@@ -30,12 +30,12 @@ router.post(
   async (req: Request, res: Response) => {
     const { ticketId } = req.body;
 
-    const ticket = await Ticket.findById(ticketId);
-    if (!ticket) {
+    const commodity = await Commodity.findById(ticketId);
+    if (!commodity) {
       throw new NotFoundError();
     }
 
-    const isReserved = await ticket.isReserved(); // 定義在mongoose裡面
+    const isReserved = await commodity.isReserved(); // 定義在mongoose裡面
     if (isReserved) {
       throw new BadRequestError('Ticket is already reserved');
     }
@@ -47,7 +47,7 @@ router.post(
       userId: req.currentUser!.id,
       status: OrderStatus.Created,
       expiresAt: expiration,
-      ticket,
+      ticket: commodity,
     });
     await order.save();
 
@@ -58,8 +58,8 @@ router.post(
       status: order.status,
       expiresAt: order.expiresAt.toISOString(),
       ticket: {
-        id: ticket.id,
-        price: ticket.price,
+        id: commodity.id,
+        price: commodity.price,
       },
     })
 

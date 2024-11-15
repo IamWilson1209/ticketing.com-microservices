@@ -27,9 +27,3 @@ class NatsWrapper {
 }
 
 export const natsWrapper = new NatsWrapper();
-
-// return new Promise<void>((resolve, reject) => {
-//   this._client!.on('connect', () => {
-//     console.log('Connected to NATS');
-//     resolve();
-//   });

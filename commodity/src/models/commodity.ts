@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
-interface TicketAttrs {
+interface CommodityAttrs {
   title: string;
   price: number;
   userId: string;
 }
 
-interface TicketDoc extends mongoose.Document {
+interface CommodityDoc extends mongoose.Document {
   title: string;
   price: number;
   userId: string;
@@ -15,11 +15,11 @@ interface TicketDoc extends mongoose.Document {
   orderId?: string;
 }
 
-interface TicketModel extends mongoose.Model<TicketDoc> {
-  build(attrs: TicketAttrs): TicketDoc;
+interface CommodityModel extends mongoose.Model<CommodityDoc> {
+  build(attrs: CommodityAttrs): CommodityDoc;
 }
 
-const ticketSchema = new mongoose.Schema(
+const commoditySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     price: { type: Number, required: true },
@@ -36,13 +36,13 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 
-ticketSchema.set('versionKey', 'version');
-ticketSchema.plugin(updateIfCurrentPlugin);
+commoditySchema.set('versionKey', 'version');
+commoditySchema.plugin(updateIfCurrentPlugin);
 
-ticketSchema.statics.build = (attrs: TicketAttrs) => {
-  return new Ticket(attrs);
+commoditySchema.statics.build = (attrs: CommodityAttrs) => {
+  return new Commodity(attrs);
 };
 
-const Ticket = mongoose.model<TicketDoc, TicketModel>('Ticket', ticketSchema);
+const Commodity = mongoose.model<CommodityDoc, CommodityModel>('Commodity', commoditySchema);
 
-export { Ticket };
+export { Commodity };

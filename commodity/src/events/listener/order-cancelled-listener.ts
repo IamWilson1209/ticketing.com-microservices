@@ -1,7 +1,7 @@
 import { Listener, OrderCancelledEvent, Subjects } from '@weitickets/common';
 import { queueGroupName } from './queueGroupName';
 import { Message } from 'node-nats-streaming';
-import { Ticket } from '../../models/ticket';
+import { Commodity } from '../../models/commodity';
 import { TicketUpdatedPublisher } from '../publishers/ticket-updated-publisher';
 
 export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
@@ -10,27 +10,27 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
 
   async onMessage(data: OrderCancelledEvent['data'], msg: Message) {
     // find the ticket that order is reserving
-    const ticket = await Ticket.findById(data.ticket.id);
+    const commodity = await Commodity.findById(data.ticket.id);
 
     // not ticket, throw error
-    if (!ticket) {
-      throw new Error('Ticket not found');
+    if (!commodity) {
+      throw new Error('Commodity not found');
     }
 
-    // Mark the ticket as being reserved by setting undefined
-    ticket.set({ orderId: undefined });
+    // Mark the commodity as being reserved by setting undefined
+    commodity.set({ orderId: undefined });
 
     // Save the ticket
-    await ticket.save();
+    await commodity.save();
 
     // 更新版本
     await new TicketUpdatedPublisher(this.stan).publish({
-      id: ticket.id,
-      version: ticket.version,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId,
-      orderId: ticket.orderId,
+      id: commodity.id,
+      version: commodity.version,
+      title: commodity.title,
+      price: commodity.price,
+      userId: commodity.userId,
+      orderId: commodity.orderId,
     });
 
     // ack msg

@@ -7,7 +7,7 @@ import {
   NotAuthorizeError,
   BadRequestError,
 } from '@weitickets/common';
-import { Ticket } from '../models/ticket';
+import { Commodity } from '../models/commodity';
 import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
@@ -22,27 +22,27 @@ router.put(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const ticket = await Ticket.findById(req.params.id);
+    const commodity = await Commodity.findById(req.params.id);
 
-    if (!ticket) throw new NotFoundError();
+    if (!commodity) throw new NotFoundError();
 
-    if (ticket.orderId) throw new BadRequestError('Cannot edit a reserved ticket');
+    if (commodity.orderId) throw new BadRequestError('Cannot edit a reserved ticket');
 
-    if (ticket.userId !== req.currentUser!.id) throw new NotAuthorizeError();
+    if (commodity.userId !== req.currentUser!.id) throw new NotAuthorizeError();
 
-    ticket.set({ title: req.body.title, price: req.body.price });
-    await ticket.save();
+    commodity.set({ title: req.body.title, price: req.body.price });
+    await commodity.save();
 
     new TicketUpdatedPublisher(natsWrapper.client).publish({
-      id: ticket.id,
-      version: ticket.version,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId,
+      id: commodity.id,
+      version: commodity.version,
+      title: commodity.title,
+      price: commodity.price,
+      userId: commodity.userId,
     })
 
 
-    res.send(ticket);
+    res.send(commodity);
   }
 );
 

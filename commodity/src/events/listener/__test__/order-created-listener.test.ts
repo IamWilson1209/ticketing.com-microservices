@@ -1,6 +1,6 @@
 import { OrderCreatedListener } from '../order-created-listener';
 import { natsWrapper } from '../../../nats-wrapper';
-import { Ticket } from '../../../models/ticket';
+import { Commodity } from '../../../models/commodity';
 import mongoose from 'mongoose';
 import { OrderCreatedEvent } from '@weitickets/common';
 import { OrderStatus } from '@weitickets/common';
@@ -8,12 +8,12 @@ import { Message } from 'node-nats-streaming';
 
 const setup = async () => {
   const listener = new OrderCreatedListener(natsWrapper.client);
-  const ticket = Ticket.build({
+  const commodity = Commodity.build({
     title: 'concert ticket',
     price: 20,
     userId: 'gjiogo',
   });
-  await ticket.save();
+  await commodity.save();
 
   const data: OrderCreatedEvent['data'] = {
     id: new mongoose.Types.ObjectId().toHexString(),
@@ -22,8 +22,8 @@ const setup = async () => {
     userId: 'gjiogo',
     expiresAt: 'gjiogo',
     ticket: {
-      id: ticket.id,
-      price: ticket.price,
+      id: commodity.id,
+      price: commodity.price,
     },
   };
 
@@ -32,28 +32,28 @@ const setup = async () => {
     ack: jest.fn(),
   }
 
-  return { listener, ticket, data, msg };
+  return { listener, commodity, data, msg };
 };
 
-it('set the user id of the ticket', async () => {
-  const { listener, ticket, data, msg } = await setup();
+it('set the user id of the commodity', async () => {
+  const { listener, commodity, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
 
-  const updatedTicket = await Ticket.findById(ticket.id);
+  const updatedCommodity = await Commodity.findById(commodity.id);
 
-  expect(updatedTicket!.orderId).toEqual(data.id);
+  expect(updatedCommodity!.orderId).toEqual(data.id);
 })
 
 it('acks the message', async () => {
-  const { listener, ticket, data, msg } = await setup();
+  const { listener, commodity, data, msg } = await setup();
   await listener.onMessage(data, msg);
 
   expect(msg.ack).toHaveBeenCalled();
 })
 
 it('publish update event', async () => {
-  const { listener, ticket, data, msg } = await setup();
+  const { listener, commodity, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
 

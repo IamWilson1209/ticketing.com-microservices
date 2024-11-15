@@ -2,28 +2,28 @@ import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { Order, OrderStatus } from './order';
 
-interface TicketAttrs {
+interface CommodityAttrs {
   id: string;
   title: string;
   price: number;
 }
 
-export interface TicketDoc extends mongoose.Document {
+export interface CommodityDoc extends mongoose.Document {
   title: string;
   price: number;
   version: number;
   isReserved(): Promise<boolean>;
 }
 
-interface TicketModel extends mongoose.Model<TicketDoc> {
-  build(attrs: TicketAttrs): TicketDoc;
+interface CommodityModel extends mongoose.Model<CommodityDoc> {
+  build(attrs: CommodityAttrs): CommodityDoc;
   findByEvent(event: {
     id: string;
     version: number;
-  }): Promise<TicketDoc | null>;
+  }): Promise<CommodityDoc | null>;
 }
 
-const ticketSchema = new mongoose.Schema(
+const commoditySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
@@ -38,8 +38,8 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 
-ticketSchema.set('versionKey', 'version');
-ticketSchema.plugin(updateIfCurrentPlugin);
+commoditySchema.set('versionKey', 'version');
+commoditySchema.plugin(updateIfCurrentPlugin);
 
 // ticketSchema.pre('save', async function (done) {
 //   // @ts-ignore
@@ -49,24 +49,24 @@ ticketSchema.plugin(updateIfCurrentPlugin);
 //   done();
 // })
 
-ticketSchema.statics.findByEvent = async (event: {
+commoditySchema.statics.findByEvent = async (event: {
   id: string;
   version: number;
 }) => {
-  return Ticket.findOne({
+  return Commodity.findOne({
     _id: event.id,
     version: event.version - 1,
   });
 };
 
-ticketSchema.statics.build = (attrs: TicketAttrs) => {
-  return new Ticket({
+commoditySchema.statics.build = (attrs: CommodityAttrs) => {
+  return new Commodity({
     _id: attrs.id,
     title: attrs.title,
     price: attrs.price,
   });
 };
-ticketSchema.methods.isReserved = async function () {
+commoditySchema.methods.isReserved = async function () {
   //this === the ticket doc we just called 'isReserced' on
   const existingOrder = await Order.findOne({
     ticket: this,
@@ -81,6 +81,6 @@ ticketSchema.methods.isReserved = async function () {
   return !!existingOrder; // null === false, else true
 };
 
-const Ticket = mongoose.model<TicketDoc, TicketModel>('Ticket', ticketSchema);
+const Commodity = mongoose.model<CommodityDoc, CommodityModel>('Commodity', commoditySchema);
 
-export { Ticket };
+export { Commodity };

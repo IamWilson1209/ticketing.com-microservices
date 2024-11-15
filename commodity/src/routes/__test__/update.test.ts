@@ -3,7 +3,7 @@ import { app } from '../../app';
 import mongoose from 'mongoose';
 import { getCookiesForSignedInTest } from '../../test/getCookiesForSigninTest';
 import { natsWrapper } from '../../nats-wrapper';
-import { Ticket } from '../../models/ticket';
+import { Commodity } from '../../models/commodity';
 
 it('returns a 404 if provided id not exist', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
@@ -11,7 +11,7 @@ it('returns a 404 if provided id not exist', async () => {
     .put(`/api/tickets/${id}`)
     .set('Cookie', getCookiesForSignedInTest())
     .send({
-      title: 'Updated Test Ticket',
+      title: 'Updated Test Commodity',
       price: 20,
     })
     .expect(404);
@@ -22,18 +22,18 @@ it('returns a 401 if user not authenticated', async () => {
   await request(app)
     .put(`/api/tickets/${id}`)
     .send({
-      title: 'Updated Test Ticket',
+      title: 'Updated Test Commodity',
       price: 20,
     })
     .expect(401);
 });
 
-it('returns a 401 if user not own ticket', async () => {
+it('returns a 401 if user not own commodity', async () => {
   const response = await request(app)
     .post(`/api/tickets`)
     .set('Cookie', getCookiesForSignedInTest())
     .send({
-      title: 'Test Ticket',
+      title: 'Test Commodity',
       price: 20,
     });
 
@@ -41,7 +41,7 @@ it('returns a 401 if user not own ticket', async () => {
     .put(`/api/tickets/${response.body.id}`)
     .set('Cookie', getCookiesForSignedInTest()) // 隨機生成
     .send({
-      title: 'Updated Test Ticket',
+      title: 'Updated Test Commodity',
       price: 3000,
     })
     .expect(401);
@@ -53,7 +53,7 @@ it('returns a 400 if user provided invalid title or price', async () => {
     .post(`/api/tickets/`)
     .set('Cookie', cookie)
     .send({
-      title: 'Test Ticket',
+      title: 'Test Commodity',
       price: 20,
     });
 
@@ -76,28 +76,28 @@ it('returns a 400 if user provided invalid title or price', async () => {
   expect(400);
 });
 
-it('update tickets with valid input, returns a 200 on successful GET request', async () => {
+it('update Commoditise with valid input, returns a 200 on successful GET request', async () => {
   const cookie = getCookiesForSignedInTest();
   const response = await request(app)
     .post(`/api/tickets/`)
     .set('Cookie', cookie)
     .send({
-      title: 'Test Ticket',
+      title: 'Test Commodity',
       price: 20,
     });
   expect(201);
 
-  const ticketResponse = await request(app)
+  const commodityResponse = await request(app)
     .put(`/api/tickets/${response.body.id}`)
     .set('Cookie', cookie)
     .send({
-      title: 'Updated Test Ticket',
+      title: 'Updated Test Commodity',
       price: 30,
     });
   expect(200);
 
-  expect(ticketResponse.body.title).toEqual('Updated Test Ticket');
-  expect(ticketResponse.body.price).toEqual(30);
+  expect(commodityResponse.body.title).toEqual('Updated Test Commodity');
+  expect(commodityResponse.body.price).toEqual(30);
 });
 
 it('publishes an event', async () => {
@@ -106,16 +106,16 @@ it('publishes an event', async () => {
     .post(`/api/tickets/`)
     .set('Cookie', cookie)
     .send({
-      title: 'Test Ticket',
+      title: 'Test Commodity',
       price: 20,
     });
   expect(201);
 
-  const ticketResponse = await request(app)
+  const commodityResponse = await request(app)
     .put(`/api/tickets/${response.body.id}`)
     .set('Cookie', cookie)
     .send({
-      title: 'Updated Test Ticket',
+      title: 'Updated Test Commodity',
       price: 30,
     });
   expect(200);
@@ -123,26 +123,26 @@ it('publishes an event', async () => {
   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
 
-it('reject updates if the ticket is reserved', async () => {
+it('reject updates if the commodity is reserved', async () => {
   const cookie = getCookiesForSignedInTest();
 
   const response = await request(app)
     .post(`/api/tickets/`)
     .set('Cookie', cookie)
     .send({
-      title: 'Test Ticket',
+      title: 'Test Commodity',
       price: 20,
     });
 
-  const ticket = await Ticket.findById(response.body.id);
-  ticket!.set({ orderId: new mongoose.Types.ObjectId().toHexString() });
-  await ticket!.save();
+  const commodity = await Commodity.findById(response.body.id);
+  commodity!.set({ orderId: new mongoose.Types.ObjectId().toHexString() });
+  await commodity!.save();
 
   await request(app)
     .put(`/api/tickets/${response.body.id}`)
     .set('Cookie', cookie)
     .send({
-      title: 'Updated Test Ticket',
+      title: 'Updated Test Commodity',
       price: 30,
     });
   expect(400);

@@ -1,7 +1,7 @@
 import { ExpirationCompleteListener } from "../expiration-complete-listener";
 import { natsWrapper } from "../../../nats-wrapper";
 import { Order } from "../../../models/order";
-import { Ticket } from "../../../models/ticket";
+import { Commodity } from "../../../models/commodity";
 import mongoose from "mongoose";
 import { ExpirationCompleteEvent, OrderStatus } from "@weitickets/common";
 import { Message } from "node-nats-streaming";
@@ -10,18 +10,18 @@ import { Message } from "node-nats-streaming";
 const setup = async () => {
   const listener = new ExpirationCompleteListener(natsWrapper.client);
 
-  const ticket = Ticket.build({
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
-    title: 'concert ticket',
+    title: 'concert commodity',
     price: 20,
   })
-  await ticket.save();
+  await commodity.save();
 
   const order = Order.build({
     status: OrderStatus.Created,
     userId: 'gjiogo',
     expiresAt: new Date(),
-    ticket,
+    ticket: commodity,
   })
   await order.save();
 
@@ -34,11 +34,11 @@ const setup = async () => {
     ack: jest.fn(),
   }
 
-  return { listener, ticket, order, data, msg };
+  return { listener, commodity, order, data, msg };
 }
 
 it('update the order status cancelled', async () => {
-  const { listener, ticket, order, data, msg } = await setup();
+  const { listener, commodity, order, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
 
@@ -48,7 +48,7 @@ it('update the order status cancelled', async () => {
 })
 
 it('emit an order cancelled event', async () => {
-  const { listener, ticket, order, data, msg } = await setup();
+  const { listener, commodity, order, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
 
@@ -60,7 +60,7 @@ it('emit an order cancelled event', async () => {
 })
 
 it('ack the message', async () => {
-  const { listener, ticket, order, data, msg } = await setup();
+  const { listener, commodity, order, data, msg } = await setup();
   await listener.onMessage(data, msg);
 
   expect(msg.ack).toHaveBeenCalled();

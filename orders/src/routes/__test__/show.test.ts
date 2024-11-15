@@ -1,24 +1,24 @@
 import request from "supertest";
 import { app } from "../../app";
-import { Ticket } from "../../models/ticket";
+import { Commodity } from "../../models/commodity";
 import { getCookiesForSignedInTest } from "../../test/getCookiesForSigninTest";
 import mongoose from "mongoose";
 
 it('fetches the order', async () => {
   // Create a ticket
-  const ticket = Ticket.build({
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 20,
   });
-  await ticket.save();
+  await commodity.save();
 
   const user = getCookiesForSignedInTest();
-  // make a request to build an order with this ticket
+  // make a request to build an order with this commodity
   const { body: order } = await request(app)
     .post('/api/orders')
     .set('Cookie', user)
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: commodity.id })
     .expect(201);
   console.log('show test order: ', order)
   console.log('show test orderId: ', order.id)
@@ -34,21 +34,21 @@ it('fetches the order', async () => {
 });
 
 it('returns an error if one user tries to fetch another users order', async () => {
-  // Create a ticket
-  const ticket = Ticket.build({
+  // Create a commodity
+  const commodity = Commodity.build({
     id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 20,
   });
-  await ticket.save();
+  await commodity.save();
 
   const user = getCookiesForSignedInTest();
   console.log('user: ', user)
-  // make a request to build an order with this ticket
+  // make a request to build an order with this commodity
   const { body: order } = await request(app)
     .post('/api/orders')
     .set('Cookie', user)
-    .send({ ticketId: ticket.id })
+    .send({ ticketId: commodity.id })
     .expect(201);
 
   // make request to fetch the order
