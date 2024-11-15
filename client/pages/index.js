@@ -3,7 +3,7 @@ import Link from 'next/link';
 const LandingPage = ({ currentUser, tickets }) => {
   const ticketList = tickets.map((ticket) => {
     return (
-      <tr key={ticket.id}>
+      <tr key={ticket.id} className="hover">
         <td>{ticket.title}</td>
         <td>{ticket.price}</td>
         <td>
@@ -16,11 +16,11 @@ const LandingPage = ({ currentUser, tickets }) => {
   });
 
   return (
-    <div>
+    <div className="overflow-x-auto">
       <h1>Tickets</h1>
       <table className="table">
         <thead>
-          <tr>
+          <tr className="hover">
             <th>Title</th>
             <th>Price</th>
             <th>Link</th>
@@ -33,12 +33,8 @@ const LandingPage = ({ currentUser, tickets }) => {
 };
 
 LandingPage.getInitialProps = async (context, client, currentUser) => {
-  // console.log('LandingPage getInitialProps');
-  // const client = buildClient(context);
-  // const { data } = await client.get('/api/users/currentuser');
-
+  console.log('STRIPE_PUBLIC_KEY:', process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
   const { data } = await client.get('/api/tickets');
-
   return { tickets: data };
 };
 
