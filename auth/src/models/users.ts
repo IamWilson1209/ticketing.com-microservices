@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Password } from '../services/password';
+import { HashPassword } from '../utils/hash-password';
 
 // 創建新使用者會需要的屬性
 interface UserAttrs {
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre('save', async function (done) {
   if (this.isModified('password')) {
-    const hashed = await Password.toHash(this.get('password'));
+    const hashed = await HashPassword.toHash(this.get('password'));
     this.set('password', hashed);
   }
   done();

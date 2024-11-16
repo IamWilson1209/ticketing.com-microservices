@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { validateRequest, BadRequestError } from '@weitickets/common';
 import { User } from '../models/users';
+import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookies';
 
 const router = express.Router();
 
@@ -18,15 +19,21 @@ router.post(
   validateRequest,
   async (req: Request, res: Response): Promise<void> => {
 
-    const { email, password } = req.body;
+    const { email, password, firstName, lastName, phoneNumber } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      $or: [
+        { email }, { phoneNumber }
+      ]
+    });
     if (existingUser) {
       throw new BadRequestError('Email already in use');
     }
 
-    const user = User.build({ email, password });
+    const user = User.build({ email, password, firstName, lastName, phoneNumber });
     await user.save();
+
+    // generateTokenAndSetCookie(user.id, user.email, res);
 
     const userJwt = jwt.sign(
       { id: user.id, email: user.email },

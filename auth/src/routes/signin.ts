@@ -3,7 +3,8 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/users';
 import { validateRequest, BadRequestError } from '@weitickets/common';
-import { Password } from '../services/password';
+import { HashPassword } from '../utils/hash-password';
+import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookies';
 
 const router = express.Router();
 
@@ -21,10 +22,12 @@ router.post(
     const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
+
     if (!existingUser) {
       throw new BadRequestError('Invalid credentials');
     }
-    const passwordMatch = await Password.compare(
+
+    const passwordMatch = await HashPassword.compare(
       existingUser.password,
       password
     );
@@ -33,11 +36,14 @@ router.post(
       throw new BadRequestError('Invalid credentials');
     }
 
+    // generateTokenAndSetCookie(existingUser.id, existingUser.email, res);
+
     const userJwt = jwt.sign(
       { id: existingUser.id, email: existingUser.email },
       process.env.JWT_KEY!
     );
 
+    // Store jwt object in the "server" session
     req.session = {
       jwt: userJwt
     }

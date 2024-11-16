@@ -11,7 +11,13 @@ it('fails when a email that does not exist is supplied', async () => {
 it('fails when incorrect password is supplied', async () => {
   await request(app)
     .post('/api/users/signup')
-    .send({ email: 'test@test.com', password: 'password' })
+    .send({
+      email: 'test@test.com',
+      password: 'password',
+      firstName: 'firstName',
+      lastName: 'lastName',
+      phoneNumber: '0965650099',
+    })
     .expect(201);
   await request(app)
     .post('/api/users/signin')
@@ -22,11 +28,42 @@ it('fails when incorrect password is supplied', async () => {
 it('success when given valid credientials', async () => {
   await request(app)
     .post('/api/users/signup')
-    .send({ email: 'test@test.com', password: 'password' })
+    .send({
+      email: 'test@test.com',
+      password: 'password',
+      firstName: 'firstName',
+      lastName: 'lastName',
+      phoneNumber: '0965650099',
+    })
     .expect(201);
   await request(app)
     .post('/api/users/signin')
     .send({ email: 'test@test.com', password: 'password' })
     .expect(201);
   expect(400);
+});
+
+it('sets cookie after successful signin', async () => {
+  await request(app)
+    .post('/api/users/signup')
+    .send({
+      email: 'test@test.com',
+      password: 'password',
+      firstName: 'firstName',
+      lastName: 'lastName',
+      phoneNumber: '0965650099',
+    })
+    .expect(201);
+
+  await request(app)
+    .post('/api/users/signout')
+    .send({})
+    .expect(200);
+
+  const response = await request(app)
+    .post('/api/users/signin')
+    .send({ email: 'test@test.com', password: 'password' })
+    .expect(201);
+  console.log(response.get('Set-Cookie'));
+  expect(response.get('Set-Cookie')).toBeDefined();
 });
